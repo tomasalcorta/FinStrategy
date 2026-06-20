@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InvestMarket — Estrategias de inversión</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <polyline points="2,16 8,9 13,13 20,5" stroke="#3B82F6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="20" cy="5" r="2" fill="#3B82F6"/>
+      </svg>
+      InvestMarket
+    </div>
+    <div class="nav-links">
+      <a href="#" class="nav-link">Explorar</a>
+      <a href="#" class="nav-link">Mis estrategias</a>
+      <button class="btn-primary" onclick="openModal('publish')">+ Publicar</button>
+    </div>
+    <div class="nav-right">
+      <button class="cart-btn" id="cartBtn" onclick="toggleCart()" aria-label="Carrito">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        <span class="cart-count" id="cartCount" style="display:none">0</span>
+      </button>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menú">&#9776;</button>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#">Explorar</a>
+    <a href="#">Mis estrategias</a>
+    <button class="btn-primary" onclick="openModal('publish')">+ Publicar</button>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-tag">Comunidad de inversores</div>
+      <h1>Estrategias de inversión<br>creadas por la comunidad</h1>
+      <p class="hero-sub">Explorá, comparé y accedé a estrategias diseñadas por inversores reales. Desde renta fija hasta cripto.</p>
+      <div class="search-wrap">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="5" stroke="#94A3B8" stroke-width="1.5"/>
+          <line x1="11" y1="11" x2="14.5" y2="14.5" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Buscar por nombre, autor o descripción..." />
+      </div>
+    </div>
+  </header>
+
+  <!-- STATS -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-num" id="statTotal">18</span>
+          <span class="stat-label">Estrategias activas</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num green">21.4%</span>
+          <span class="stat-label">Rentabilidad promedio</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">3,840</span>
+          <span class="stat-label">Inversores activos</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num green">↑ 18%</span>
+          <span class="stat-label">Crecimiento mensual</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILTERS + GRID -->
+  <main class="main-section">
+    <div class="container">
+      <div class="filters-row">
+        <span class="filter-label">Filtrar por riesgo:</span>
+        <div class="chips" id="chips">
+          <button class="chip active" data-filter="Todos">Todos</button>
+          <button class="chip" data-filter="Bajo"><span class="dot dot-bajo"></span> Bajo</button>
+          <button class="chip" data-filter="Medio"><span class="dot dot-medio"></span> Medio</button>
+          <button class="chip" data-filter="Alto"><span class="dot dot-alto"></span> Alto</button>
+        </div>
+        <span class="results-count" id="resultsCount">18 resultados</span>
+      </div>
+      <div class="card-grid" id="cardGrid"></div>
+      <div class="empty-state" id="emptyState" style="display:none">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+          <circle cx="18" cy="18" r="12" stroke="#94A3B8" stroke-width="2"/>
+          <line x1="27" y1="27" x2="36" y2="36" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <p>No se encontraron estrategias con ese criterio.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL DETALLE -->
+  <div class="modal-overlay" id="detailModal" role="dialog" aria-modal="true" aria-label="Detalle de estrategia">
+    <div class="modal-box detail-box" id="detailBox"></div>
+  </div>
+
+  <!-- MODAL PUBLICAR -->
+  <div class="modal-overlay" id="publishModal" role="dialog" aria-modal="true" aria-label="Publicar estrategia">
+    <div class="modal-box publish-box">
+      <div class="modal-header">
+        <h2>Publicar estrategia</h2>
+        <button class="close-btn" onclick="closeModal('publish')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="form-group">
+        <label>Nombre de la estrategia</label>
+        <input type="text" placeholder="Ej: Horizonte 2030" id="pubNombre" />
+      </div>
+      <div class="form-group">
+        <label>Tu nombre / autor</label>
+        <input type="text" placeholder="Ej: Ana García" id="pubAutor" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Categoría de riesgo</label>
+          <select id="pubRiesgo">
+            <option value="Bajo">Bajo</option>
+            <option value="Medio">Medio</option>
+            <option value="Alto">Alto</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Precio (USD)</label>
+          <input type="number" placeholder="0.00" id="pubPrecio" min="0" step="0.01" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Rentabilidad histórica (%)</label>
+        <input type="number" placeholder="Ej: 12.5" id="pubRent" step="0.1" />
+      </div>
+      <div class="form-group">
+        <label>Descripción</label>
+        <textarea rows="3" placeholder="Describí brevemente en qué consiste la estrategia..." id="pubDesc"></textarea>
+      </div>
+      <div class="form-actions">
+        <button class="btn-secondary" onclick="closeModal('publish')">Cancelar</button>
+        <button class="btn-primary" onclick="publishStrategy()">Publicar estrategia</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CHECKOUT -->
+  <div class="modal-overlay" id="checkoutModal" role="dialog" aria-modal="true" aria-label="Checkout">
+    <div class="modal-box checkout-box" id="checkoutBox">
+      <div class="modal-header">
+        <h2>Finalizar compra</h2>
+        <button class="close-btn" onclick="closeModal('checkout')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div id="checkoutContent"></div>
+    </div>
+  </div>
+
+  <!-- CART SIDEBAR -->
+  <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+  <aside class="cart-sidebar" id="cartSidebar" aria-label="Carrito de compras">
+    <div class="cart-header">
+      <h2>Tu carrito</h2>
+      <button class="close-btn" onclick="toggleCart()" aria-label="Cerrar carrito">&times;</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer" id="cartFooter"></div>
+  </aside>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <footer class="footer">
+    <div class="container">
+      <span class="logo" style="font-size:15px">
+        <svg width="16" height="16" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+          <polyline points="2,16 8,9 13,13 20,5" stroke="#3B82F6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="20" cy="5" r="2" fill="#3B82F6"/>
+        </svg>
+        InvestMarket
+      </span>
+      <span class="footer-copy">© 2025 · Plataforma de estrategias de inversión</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
